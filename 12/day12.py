@@ -8,7 +8,7 @@ def get_edges(node, map):
         if px >= len(map) or px < 0 or py >= len(map[0]) or py < 0:
             continue
 
-        diff = ord(map[px][py]) - ord(map[nx][ny])
+        diff = ord(map[nx][ny]) - ord(map[px][py])
         if diff < 2:
             edges.append((px,py))
     return edges
@@ -29,16 +29,7 @@ def bfs(map, origin, goal):
                 parent[edge] = n
                 queue.append(edge)
 
-    if goal not in visited:
-        return 2000
-
-    count = 0
-    current = goal
-    while current != origin:
-        count += 1
-        current = parent[current]
-    
-    return count
+    return parent
 
 def part1(input: list[str]):
     input = [[char for char in row] for row in input]
@@ -53,7 +44,15 @@ def part1(input: list[str]):
                 end = (x,y)
                 input[x][y] = "z"
 
-    return bfs(input, start, end)
+    graph = bfs(input, end, start)
+
+    count = 0
+    current = start
+    while current != end:
+        count += 1
+        current = graph[current]
+
+    return count
 
 def part2(input: list[str]):
     input = [[char for char in row] for row in input]
@@ -68,11 +67,19 @@ def part2(input: list[str]):
                 end = (x,y)
                 input[x][y] = "z"
 
+    graph = bfs(input, end, (-1,-1)) # oob, generate whole graph
+
     counts = []
-    total_starts = len(starts)
-    for i,start in enumerate(starts):
-        print(f"Searching from start {i} of {total_starts}")
-        counts.append(bfs(input, start, end))
+    for start in starts:
+        if start not in graph.values():
+            continue
+
+        count = 0
+        current = start
+        while current != end:
+            count += 1
+            current = graph[current]
+        counts.append(count)
 
     return min(counts)
 
