@@ -49,8 +49,6 @@ def drop_sand(map: dict[int, dict[int, str]], void: int) -> int:
         pos = (500, 0)
         new_pos = get_move(map, pos)
         while new_pos:
-            if new_pos[1] > void:
-                return sand_count
             pos = new_pos
             if pos[1] > void:
                 return sand_count
